@@ -1,6 +1,4 @@
 buildscript {
-    
-
     repositories {
         mavenLocal()
         mavenCentral()
@@ -10,8 +8,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.2'
-        
-
     }
 }
 
@@ -43,13 +39,11 @@ allprojects {
 project(":desktop") {
     apply plugin: "java-library"
 
-
     dependencies {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        
     }
 }
 
@@ -70,17 +64,37 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-        
     }
 }
 
 project(":core") {
     apply plugin: "java-library"
 
+// Apply the Java plugin
+    apply plugin: 'java'
 
+// Set the source and target compatibility to Java 8
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+// Project configurations and dependencies
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        
+        implementation "org.springframework:spring-context:5.3.22"
+        implementation "jakarta.validation:jakarta.validation-api:3.0.2"
+        implementation "org.projectlombok:lombok:1.18.30"
+        annotationProcessor "org.projectlombok:lombok:1.18.30"
+        implementation "at.favre.lib:bcrypt:0.9.0"
+        implementation "jakarta.validation:jakarta.validation-api:3.0.2"
+        implementation "javax.validation:validation-api:2.0.1.Final"
+        implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
+        implementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
+        implementation 'jakarta.el:jakarta.el-api:4.0.0'
+        implementation 'org.glassfish:jakarta.el:4.0.0'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.annotationProcessorPath = configurations.annotationProcessor
     }
 }
