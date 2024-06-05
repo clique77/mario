@@ -26,6 +26,12 @@ public abstract class InteractiveTileObject {
   protected PlayScreen screen;
   protected MapObject object;
 
+  /**
+   * Конструктор класу InteractiveTileObject.
+   *
+   * @param screen Екран гри.
+   * @param object Об'єкт карти.
+   */
   public InteractiveTileObject(PlayScreen screen, MapObject object) {
     this.object = object;
     this.screen = screen;
@@ -47,15 +53,31 @@ public abstract class InteractiveTileObject {
     fixture = body.createFixture(fdef);
   }
 
+  /**
+   * Обробка удару по голові.
+   *
+   * @param mario Головний герой.
+   */
   public abstract void onHeadHit(Mario mario);
-  public void setCategoryFilter(short filterBit){
+
+  /**
+   * Встановлення категорії фільтра.
+   *
+   * @param filterBit Категорія фільтра.
+   */
+  public void setCategoryFilter(short filterBit) {
     Filter filter = new Filter();
     filter.categoryBits = filterBit;
     fixture.setFilterData(filter);
   }
 
-  public TiledMapTileLayer.Cell getCell(){
+  /**
+   * Отримання комірки з тайлового шару.
+   *
+   * @return Комірка тайлового шару.
+   */
+  public TiledMapTileLayer.Cell getCell() {
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(1);
-    return layer.getCell((int)(body.getPosition().x * MarioBros.PPM / 16), (int)(body.getPosition().y * MarioBros.PPM / 16));
+    return layer.getCell((int) (body.getPosition().x * MarioBros.PPM / 16), (int) (body.getPosition().y * MarioBros.PPM / 16));
   }
 }

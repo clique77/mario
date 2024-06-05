@@ -1,3 +1,9 @@
+/**
+ * Загальний репозиторій, який надає базові операції збереження, видалення, оновлення та пошуку для сутностей.
+ * Використовується для роботи з базою даних за допомогою JDBC.
+ *
+ * @param <T> Тип сутності, яку представляє даний репозиторій.
+ */
 package main.com.kulikov.Repository;
 
 import main.com.kulikov.Entity.Entity;
@@ -6,6 +12,7 @@ import main.com.kulikov.Repository.excpetion.EntitySaveException;
 import main.com.kulikov.Repository.excpetion.EntityUpdateException;
 import main.com.kulikov.Repository.excpetion.LastRecordNotFoundException;
 import main.com.kulikov.connection.ConnectionManager;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,6 +29,13 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
   protected final String tableName;
   protected final ConnectionManager connectionManager;
 
+  /**
+   * Конструктор для створення екземпляра GenericRepository.
+   *
+   * @param rowMapper         Об'єкт, який відповідає за відображення рядків бази даних на сутність.
+   * @param tableName         Назва таблиці в базі даних.
+   * @param connectionManager Об'єкт, що забезпечує доступ до підключення до бази даних.
+   */
   protected GenericRepository(RowMapper<T> rowMapper, String tableName,
       ConnectionManager connectionManager) {
     this.rowMapper = rowMapper;
@@ -29,8 +43,15 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     this.connectionManager = connectionManager;
   }
 
+  /**
+   * Зберігає сутність в базу даних.
+   *
+   * @param entity Сутність для збереження.
+   * @return Сутність після збереження.
+   * @throws EntitySaveException Виняток, що виникає при неможливості зберегти сутність.
+   */
   @Override
-  public T save(T entity) {
+  public T save(T entity) throws EntitySaveException {
     List<Object> values = tableValues(entity);
     List<String> attributes = tableAttributes();
     String attributesString = String.join(", ", attributes);
@@ -51,32 +72,59 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     } catch (SQLException e) {
       System.out.println(e.getMessage());
       throw new EntitySaveException(
-          "Error adding to table");
+          "Помилка при додаванні до таблиці");
     }
   }
 
+  /**
+   * Знаходить всі сутності у базі даних.
+   *
+   * @return Список всіх сутностей.
+   * @throws EntityNotFoundException Виняток, що виникає при неможливості знайти сутності.
+   */
   @Override
-  public List<T> findAll() {
+  public List<T> findAll() throws EntityNotFoundException {
     final String sql = "SELECT * FROM " + tableName + " " + additionalSqlArguments();
     return findAllBy(sql);
   }
 
+  /**
+   * Знаходить сутність за її ідентифікатором.
+   *
+   * @param id Ідентифікатор сутності.
+   * @return Сутність з вказаним ідентифікатором або null, якщо сутність не знайдено.
+   * @throws EntityNotFoundException Виняток, що виникає при неможливості знайти сутність за ідентифікатором.
+   */
   @Override
-  public T findById(int id) {
+  public T findById(int id) throws EntityNotFoundException {
     final String sql = "SELECT * FROM " + tableName + " " + additionalSqlArguments() + "WHERE "
         + tableAttributes().get(0) + " = " + id;
     return findBy(sql);
   }
 
+  /**
+   * Знаходить сутність за її ім'ям.
+   *
+   * @param name Ім'я сутності.
+   * @return Сутність з вказаним ім'ям або null, якщо сутність не знайдено.
+   * @throws EntityNotFoundException Виняток, що виникає при неможливості знайти сутність за ім'ям.
+   */
   @Override
-  public T findByName(String name) {
-    final String sql = "SELECT * FROM " + tableName + " " + additionalSqlArguments() + "WHERE "
+  public T findByName(String name) throws EntityNotFoundException {
+    final String sql = "SELECT * FROM " + tableName + " "  + additionalSqlArguments() + "WHERE "
         + tableAttributes().get(2) + " = " + name;
     return findBy(sql);
   }
 
+  /**
+   * Оновлює існуючу сутність в базі даних.
+   *
+   * @param entity Сутність для оновлення.
+   * @return true, якщо оновлення пройшло успішно, false - у протилежному випадку.
+   * @throws EntityUpdateException Виняток, що виникає при неможливості оновити сутність.
+   */
   @Override
-  public boolean update(T entity) {
+  public boolean update(T entity) throws EntityUpdateException {
     List<Object> values = tableValues(entity);
     List<String> attributes = tableAttributes();
     String attributesString =
@@ -98,8 +146,15 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     }
   }
 
+  /**
+   * Видаляє сутність з бази даних за її ідентифікатором.
+   *
+   * @param id Ідентифікатор сутності, яку потрібно видалити.
+   * @return true, якщо видалення пройшло успішно, false - у протилежному випадку.
+   * @throws EntityNotFoundException Виняток, що виникає при неможливості знайти сутність для видалення.
+   */
   @Override
-  public boolean delete(int id) {
+  public boolean delete(int id) throws EntityNotFoundException {
     final String sql =
         "DELETE FROM " + tableName + " WHERE " + tableAttributes().get(0) + "=" + id;
     try (Connection connection = connectionManager.get();
@@ -111,7 +166,14 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     }
   }
 
-  protected T findBy(String sql) {
+  /**
+   * Знаходить сутність за запитом SQL.
+   *
+   * @param sql SQL-запит для пошуку сутності.
+   * @return Сутність, знайдена за вказаним SQL-запитом, або null, якщо сутність не знайдено.
+   * @throws EntityNotFoundException Виняток, що виникає при неможливості знайти сутність за SQL-запитом.
+   */
+  protected T findBy(String sql) throws EntityNotFoundException {
     try (Connection connection = connectionManager.get();
         PreparedStatement statement = connection.prepareStatement(sql)) {
       ResultSet resultSet = statement.executeQuery();
@@ -126,7 +188,14 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     }
   }
 
-  protected List<T> findAllBy(String sql) {
+  /**
+   * Знаходить всі сутності за запитом SQL.
+   *
+   * @param sql SQL-запит для пошуку всіх сутностей.
+   * @return Список всіх сутностей, знайдених за вказаним SQL-запитом.
+   * @throws EntityNotFoundException Виняток, що виникає при неможливості знайти всі сутності за SQL-запитом.
+   */
+  protected List<T> findAllBy(String sql) throws EntityNotFoundException {
     try (Connection connection = connectionManager.get();
         PreparedStatement statement = connection.prepareStatement(sql)) {
       ResultSet resultSet = statement.executeQuery();
@@ -141,7 +210,13 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     }
   }
 
-  protected int getLastRecordId() {
+  /**
+   * Отримує ідентифікатор останнього запису в таблиці.
+   *
+   * @return Ідентифікатор останнього запису в таблиці.
+   * @throws LastRecordNotFoundException Виняток, що виникає при неможливості отримати ідентифікатор останнього запису.
+   */
+  protected int getLastRecordId() throws LastRecordNotFoundException {
     final String sql = "SELECT * FROM " + tableName + " ORDER BY " + tableAttributes().get(0)
         + " DESC LIMIT 1";
 
@@ -157,10 +232,27 @@ public abstract class GenericRepository<T extends Entity> implements Repository<
     return 1;
   }
 
-
+  /**
+   * Абстрактний метод для отримання списку атрибутів таблиці.
+   *
+   * @return Список атрибутів таблиці.
+   */
   protected abstract List<String> tableAttributes();
 
+  /**
+   * Абстрактний метод для отримання значень таблиці для вказаної сутності.
+   *
+   * @param entity Сутність, для якої потрібно отримати значення.
+   * @return Список значень таблиці.
+   */
   protected abstract List<Object> tableValues(T entity);
 
-  protected abstract String additionalSqlArguments();
+/**
+ * Абстрактний метод для отриман
+ * Абстрактний метод для отримання додаткових аргументів SQL-запиту.
+ *
+ * @return Додаткові аргументи SQL-запиту.
+ */
+protected abstract String additionalSqlArguments();
 }
+

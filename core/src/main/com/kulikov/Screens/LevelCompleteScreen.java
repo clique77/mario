@@ -20,6 +20,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import main.com.kulikov.MarioBros;
 
+/**
+ * Екран LevelCompleteScreen відображається, коли гравець успішно завершує рівень.
+ * Показує повідомлення про завершення рівня та кнопку для повернення до головного меню.
+ */
 public class LevelCompleteScreen implements Screen {
   private Viewport viewport;
   private Stage stage;
@@ -30,6 +34,12 @@ public class LevelCompleteScreen implements Screen {
   private Texture backgroundTexture;
   private TextureRegion backgroundRegion;
 
+  /**
+   * Конструктор класу LevelCompleteScreen.
+   *
+   * @param game  Екземпляр гри.
+   * @param batch Спрайт бетч для відображення графіки.
+   */
   public LevelCompleteScreen(Game game, SpriteBatch batch) {
     this.batch = batch;
     this.game = game;
@@ -107,6 +117,9 @@ public class LevelCompleteScreen implements Screen {
 
   }
 
+  /**
+   * Видаляє всі ресурси, пов'язані з екраном LevelCompleteScreen.
+   */
   @Override
   public void dispose() {
     stage.dispose();

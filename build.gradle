@@ -34,6 +34,11 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
     }
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = '17'
+        targetCompatibility = '17'
+    }
 }
 
 project(":desktop") {
@@ -44,6 +49,17 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    }
+
+    jar {
+        manifest {
+            attributes(
+                    'Main-Class': 'com.kirilkulikov.mariobros.DesktopLauncher'
+            )
+        }
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
     }
 }
 
@@ -65,19 +81,26 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
     }
+
+    android {
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
+        }
+    }
 }
 
 project(":core") {
     apply plugin: "java-library"
 
-// Apply the Java plugin
+    // Apply the Java plugin
     apply plugin: 'java'
 
-// Set the source and target compatibility to Java 8
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    // Set the source and target compatibility to Java 11
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
 
-// Project configurations and dependencies
+    // Project configurations and dependencies
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
@@ -86,8 +109,6 @@ project(":core") {
         implementation "org.projectlombok:lombok:1.18.30"
         annotationProcessor "org.projectlombok:lombok:1.18.30"
         implementation "at.favre.lib:bcrypt:0.9.0"
-        implementation "jakarta.validation:jakarta.validation-api:3.0.2"
-        implementation "javax.validation:validation-api:2.0.1.Final"
         implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
         implementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
         implementation 'jakarta.el:jakarta.el-api:4.0.0'

@@ -19,36 +19,67 @@ import lombok.Getter;
 import main.com.kulikov.MarioBros;
 import main.com.kulikov.Screens.PlayScreen;
 
+/**
+ * Клас, що представляє об'єкт Маріо у грі.
+ */
 public class Mario extends Sprite {
+  /**
+   * Перечислення для станів Маріо.
+   */
   public enum State { FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD}
+
+  /** Поточний стан Маріо. */
   public State currentState;
+  /** Попередній стан Маріо. */
   public State previousState;
+  /** Світ, в якому знаходиться Маріо. */
   public World world;
+  /** Фізичне тіло Маріо. */
   public Body b2body;
+  /** Текстура Маріо у стані спокою. */
   private TextureRegion marioStand;
+  /** Анімація бігу Маріо. */
   private Animation<TextureRegion> marioRun;
+  /** Текстура Маріо у стані стрибка. */
   private TextureRegion marioJump;
+  /** Текстура великого Маріо у стані спокою. */
   private TextureRegion bigMarioStand;
+  /** Текстура великого Маріо у стані стрибка. */
   private TextureRegion bigMarioJump;
+  /** Текстура Маріо після смерті. */
   private TextureRegion marioDead;
+  /** Анімація бігу великого Маріо. */
   private Animation<TextureRegion> bigMarioRun;
+  /** Анімація збільшення Маріо. */
   private Animation<TextureRegion> growMario;
 
+  /** Флаг, що вказує на напрям бігу Маріо (право/ліво). */
   private boolean runningRight;
+  /** Час відображення кадру. */
   @Getter
   private float stateTimer;
+  /** Флаг, що вказує на те, що Маріо великий. */
   private boolean marioIsBig;
+  /** Флаг, що вказує на відтворення анімації збільшення. */
   private boolean runGrowAnimation;
 
+  /** Флаг, що вказує на необхідність визначення великого Маріо. */
   private boolean timeToDefineBigMario;
+  /** Флаг, що вказує на необхідність перевизначення Маріо. */
   private boolean timeToRedefineMario;
+  /** Флаг, що вказує на смерть Маріо. */
   private boolean marioIsDead;
 
-  // Track if Mario is on the ground
+  /** Прапорець, що вказує на те, що Маріо на землі. */
   @Getter
   private boolean onGround;
 
-  public Mario(PlayScreen screen){
+  /**
+   * Конструктор класу Маріо.
+   *
+   * @param screen екран, на якому знаходиться Маріо
+   */
+  public Mario(PlayScreen screen) {
     this.world = screen.getWorld();
     currentState = State.STANDING;
     previousState = State.STANDING;
@@ -89,37 +120,48 @@ public class Mario extends Sprite {
     setRegion(marioStand);
   }
 
-  public void update(float delta){
-    if(marioIsBig){
-      setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 - 6 / MarioBros.PPM);
-    }
-    else{
-      setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
-    }
-    setRegion(getFrame(delta));
+/**
+ * Оновлює стан Маріо.
+ *
+ * @param delta час від останнь
+ * @param delta час від останнього оновлення
+ */
+public void update(float delta) {
+  if (marioIsBig) {
+    setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2 - 6 / MarioBros.PPM);
+  } else {
+    setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
+  }
+  setRegion(getFrame(delta));
 
-    if(timeToDefineBigMario){
-      defineBigMario();
-    }
-    if(timeToRedefineMario) {
-      redefineMario();
-    }
-
-    // Update onGround status based on velocity
-    onGround = b2body.getLinearVelocity().y == 0;
+  if (timeToDefineBigMario) {
+    defineBigMario();
+  }
+  if (timeToRedefineMario) {
+    redefineMario();
   }
 
-  public TextureRegion getFrame(float delta){
+  // Оновлення статусу на землі на основі швидкості
+  onGround = b2body.getLinearVelocity().y == 0;
+}
+
+  /**
+   * Отримує поточний кадр анімації Маріо.
+   *
+   * @param delta час від останнього оновлення
+   * @return текстура поточного кадру
+   */
+  public TextureRegion getFrame(float delta) {
     currentState = getState();
 
     TextureRegion region;
-    switch(currentState) {
+    switch (currentState) {
       case DEAD:
         region = marioDead;
         break;
       case GROWING:
         region = growMario.getKeyFrame(stateTimer);
-        if(growMario.isAnimationFinished(stateTimer)){
+        if (growMario.isAnimationFinished(stateTimer)) {
           runGrowAnimation = false;
         }
         break;
@@ -149,28 +191,31 @@ public class Mario extends Sprite {
     return region;
   }
 
-  public State getState(){
-    if(marioIsDead){
+  /**
+   * Отримує поточний стан Маріо.
+   *
+   * @return поточний стан Маріо
+   */
+  public State getState() {
+    if (marioIsDead) {
       return State.DEAD;
-    }
-    else if(runGrowAnimation){
+    } else if (runGrowAnimation) {
       return State.GROWING;
-    }
-    else if(b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)){
+    } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
       return State.JUMPING;
-    }
-    else if(b2body.getLinearVelocity().y < 0){
+    } else if (b2body.getLinearVelocity().y < 0) {
       return State.FALLING;
-    }
-    else if(b2body.getLinearVelocity().x != 0){
+    } else if (b2body.getLinearVelocity().x != 0) {
       return State.RUNNING;
-    }
-    else{
+    } else {
       return State.STANDING;
     }
   }
 
-  public void grow(){
+  /**
+   * Збільшує розмір Маріо.
+   */
+  public void grow() {
     runGrowAnimation = true;
     marioIsBig = true;
     timeToDefineBigMario = true;
@@ -178,7 +223,10 @@ public class Mario extends Sprite {
     MarioBros.getAssetManager().get("audio/sounds/powerup.wav", Sound.class).play();
   }
 
-  public void redefineMario(){
+  /**
+   * Перевизначає Маріо після зменшення.
+   */
+  public void redefineMario() {
     Vector2 position = b2body.getPosition();
     world.destroyBody(b2body);
 
@@ -214,7 +262,10 @@ public class Mario extends Sprite {
     b2body.setLinearDamping(2f);
   }
 
-  public void defineBigMario(){
+  /**
+   * Визначає великого Маріо.
+   */
+  public void defineBigMario() {
     Vector2 currentPosition = b2body.getPosition();
     world.destroyBody(b2body);
 
@@ -251,7 +302,10 @@ public class Mario extends Sprite {
     b2body.setLinearDamping(2f);
   }
 
-  public void defineMario(){
+  /**
+   * Визначає Маріо.
+   */
+  public void defineMario() {
     BodyDef bdef = new BodyDef();
     bdef.position.set(200 / MarioBros.PPM, 32 / MarioBros.PPM);
     bdef.type = BodyDef.BodyType.DynamicBody;
@@ -283,39 +337,53 @@ public class Mario extends Sprite {
     b2body.setLinearDamping(2f);
   }
 
-  public boolean isBig(){
+  /**
+   * Перевіряє, чи великий Маріо.
+   *
+   * @return true, якщо Маріо великий, false в іншому випадку
+   */
+  public boolean isBig() {
     return marioIsBig;
   }
 
-  public void hit(){
-    if(marioIsBig){
+  /**
+   * Обробляє удар по Маріо.
+   */
+  public void hit() {
+    if (marioIsBig) {
       marioIsBig = false;
       timeToRedefineMario = true;
       setBounds(getX(), getY(), getWidth(), getHeight() / 2);
       MarioBros.getAssetManager().get("audio/sounds/powerdown.wav", Sound.class).play();
-    }
-    else if(!marioIsBig){
+    } else if (!marioIsBig) {
       MarioBros.getAssetManager().get("audio/music/mario_music.ogg", Music.class).play();
       MarioBros.getAssetManager().get("audio/sounds/mariodie.wav", Sound.class).play();
       marioIsDead = true;
       Filter filter = new Filter();
       filter.maskBits = MarioBros.NOTHING_BIT;
-      for(Fixture fixture : b2body.getFixtureList()){
+      for (Fixture fixture : b2body.getFixtureList()) {
         fixture.setFilterData(filter);
       }
       b2body.applyLinearImpulse(new Vector2(0, 4f), b2body.getWorldCenter(), true);
     }
   }
 
-  public boolean isDead(){
+  /**
+   * Перевіряє, чи Маріо мертвий.
+   *
+   * @return true, якщо Маріо мертвий, false в іншому випадку
+   */
+  public boolean isDead() {
     return marioIsDead;
   }
 
+  /**
+   * Здійснює стрибок Маріо.
+   */
   public void jump() {
     if (isOnGround()) {
       b2body.applyLinearImpulse(new Vector2(0, 3f), b2body.getWorldCenter(), true);
       onGround = false;
     }
   }
-
 }

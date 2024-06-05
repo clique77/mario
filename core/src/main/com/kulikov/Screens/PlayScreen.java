@@ -20,12 +20,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import lombok.Getter;
 import main.com.kulikov.MarioBros;
 import main.com.kulikov.Scenes.Hud;
 import main.com.kulikov.Sprites.Items.Item;
@@ -37,9 +37,18 @@ import main.com.kulikov.Tools.WorldContactListener;
 import main.com.kulikov.Sprites.Enemy;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
+/**
+ * Екран гри, де відбувається основна гра.
+ */
 public class PlayScreen extends InputAdapter implements Screen {
   private Game game;
+  /**
+   * -- GETTER --
+   *  Повертає TextureAtlas.
+   *
+   * @return TextureAtlas
+   */
+  @Getter
   private TextureAtlas atlas;
   private SpriteBatch batch;
   private OrthographicCamera gamecamera;
@@ -48,6 +57,13 @@ public class PlayScreen extends InputAdapter implements Screen {
   private TmxMapLoader mapLoader;
   private TiledMap tiledMap;
   private OrthogonalTiledMapRenderer renderer;
+  /**
+   * -- GETTER --
+   *  Повертає світ Box2D.
+   *
+   * @return Світ Box2D.
+   */
+  @Getter
   private World world;
   private Box2DDebugRenderer debugRenderer;
   private Mario player;
@@ -55,14 +71,20 @@ public class PlayScreen extends InputAdapter implements Screen {
   private B2WorldCreator creator;
   private Array<Item> items;
   public LinkedBlockingQueue<ItemDefinition> itemsToSpawn;
-  private float menuOpenX = 3640 / MarioBros.PPM;
+  private float menuOpenX = 3640 / MarioBros.PPM; // Позиція, коли меню відкриється автоматично
   private String levelFilename;
   private Preferences prefs;
 
   private Stage stage;
-  private Skin skin;
   private TextButton menuButton;
 
+  /**
+   * Конструктор класу PlayScreen.
+   *
+   * @param game      Екземпляр гри.
+   * @param batch     SpriteBatch для відображення графіки.
+   * @param levelFile Ім'я файлу рівня.
+   */
   public PlayScreen(Game game, SpriteBatch batch, String levelFile) {
     this.levelFilename = levelFile;
 
@@ -104,10 +126,19 @@ public class PlayScreen extends InputAdapter implements Screen {
     Gdx.input.setInputProcessor(stage);
   }
 
+  /**
+   * Додає новий предмет до черги для спавну.
+   *
+   * @param itemDefinition Означення предмета.
+   */
   public void spawnItem(ItemDefinition itemDefinition) {
-    itemsToSpawn.add(itemDefinition);
+    itemsToSpawn
+        .add(itemDefinition);
   }
 
+  /**
+   * Обробляє спавн предметів з черги.
+   */
   public void handleSpawningItems() {
     if (!itemsToSpawn.isEmpty()) {
       ItemDefinition itemDefinition = itemsToSpawn.poll();
@@ -115,10 +146,6 @@ public class PlayScreen extends InputAdapter implements Screen {
         items.add(new Mushroom(this, itemDefinition.position.x, itemDefinition.position.y));
       }
     }
-  }
-
-  public TextureAtlas getAtlas() {
-    return atlas;
   }
 
   @Override
@@ -136,6 +163,11 @@ public class PlayScreen extends InputAdapter implements Screen {
     return false;
   }
 
+  /**
+   * Оброблює введення користувача.
+   *
+   * @param delta Час від останнього кадру.
+   */
   public void handleInput(float delta) {
     if (player.currentState != Mario.State.DEAD) {
       if (Gdx.input.isKeyJustPressed(Keys.W)) {
@@ -150,6 +182,11 @@ public class PlayScreen extends InputAdapter implements Screen {
     }
   }
 
+  /**
+   * Оновлює стан гри.
+   *
+   * @param delta Час від останнього кадру.
+   */
   public void update(float delta) {
     handleInput(delta);
     handleSpawningItems();
@@ -221,12 +258,13 @@ public class PlayScreen extends InputAdapter implements Screen {
     gamePort.update(width, height);
   }
 
+  /**
+   * Повертає поточну карту.
+   *
+   * @return Текстуровану карту.
+   */
   public TiledMap getMap() {
     return tiledMap;
-  }
-
-  public World getWorld() {
-    return world;
   }
 
   @Override
@@ -254,6 +292,11 @@ public class PlayScreen extends InputAdapter implements Screen {
     stage.dispose();
   }
 
+  /**
+   * Перевіряє, чи гра закінчена.
+   *
+   * @return true, якщо гра закінчена, в іншому випадку - false.
+   */
   public boolean gameOver() {
     if (player.currentState == Mario.State.DEAD && player.getStateTimer() > 3) {
       return true;

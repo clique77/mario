@@ -24,6 +24,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import main.com.kulikov.MarioBros;
 
+/**
+ * Екран головного меню гри.
+ */
 public class MainMenuScreen implements Screen {
 
   private Viewport viewport;
@@ -35,6 +38,12 @@ public class MainMenuScreen implements Screen {
   private Music music;
   private Preferences prefs;
 
+  /**
+   * Конструктор класу MainMenuScreen.
+   *
+   * @param game  Екземпляр гри.
+   * @param batch SpriteBatch для відображення графіки.
+   */
   public MainMenuScreen(Game game, SpriteBatch batch) {
     this.game = game;
     this.batch = batch;

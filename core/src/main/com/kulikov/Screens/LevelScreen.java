@@ -22,7 +22,11 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import main.com.kulikov.MarioBros;
 
+/**
+ * Екран вибору рівнів гри.
+ */
 public class LevelScreen implements Screen {
+
   private Viewport viewport;
   private Stage stage;
   private Game game;
@@ -30,6 +34,12 @@ public class LevelScreen implements Screen {
   private Texture backgroundTexture;
   private Texture buttonBackgroundTexture;
 
+  /**
+   * Конструктор класу LevelScreen.
+   *
+   * @param game  Екземпляр гри.
+   * @param batch SpriteBatch для відображення графіки.
+   */
   public LevelScreen(Game game, SpriteBatch batch) {
     this.game = game;
     this.batch = batch;
@@ -37,7 +47,7 @@ public class LevelScreen implements Screen {
     stage = new Stage(viewport, batch);
 
     Gdx.input.setInputProcessor(stage);
-    
+
     backgroundTexture = new Texture("assets/background-image.jpg");
 
     Image backgroundImage = new Image(backgroundTexture);

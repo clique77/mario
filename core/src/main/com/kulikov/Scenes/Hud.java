@@ -13,6 +13,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import main.com.kulikov.MarioBros;
 import main.com.kulikov.Screens.GameOverScreen;
 
+/**
+ * Клас Hud відповідає за відображення інформації на екрані гравця під час гри.
+ */
 public class Hud implements Disposable {
   private Game game;
   public Stage stage;
@@ -29,6 +32,13 @@ public class Hud implements Disposable {
   private SpriteBatch batch;
   private String levelFilename;
 
+  /**
+   * Конструктор класу Hud.
+   *
+   * @param batch         Спрайт бетч для відображення графіки.
+   * @param game          Екземпляр гри.
+   * @param levelFilename Шлях до файлу рівня.
+   */
   public Hud(SpriteBatch batch, Game game, String levelFilename) {
     this.game = game;
     this.levelFilename = levelFilename;
@@ -65,6 +75,11 @@ public class Hud implements Disposable {
     stage.addActor(table);
   }
 
+  /**
+   * Оновлює відображення інформації.
+   *
+   * @param delta Час з початку останнього кадру.
+   */
   public void update(float delta) {
     timeCount += delta;
     if (timeCount >= 1) {
@@ -78,11 +93,19 @@ public class Hud implements Disposable {
     }
   }
 
+  /**
+   * Додає очки гравцеві.
+   *
+   * @param value Кількість очків для додавання.
+   */
   public static void addScore(int value) {
     score += value;
     scoreLabel.setText(String.format("%06d", score));
   }
 
+  /**
+   * Видалення екземпляра Hud та всіх пов'язаних ресурсів.
+   */
   @Override
   public void dispose() {
     stage.dispose();

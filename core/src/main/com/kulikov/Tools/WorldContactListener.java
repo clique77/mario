@@ -11,8 +11,16 @@ import main.com.kulikov.Sprites.Enemy;
 import main.com.kulikov.Sprites.InteractiveTileObject;
 import main.com.kulikov.Sprites.Items.Item;
 
+/**
+ * Обробник зіткнень у світі Box2D для гри MarioBros.
+ */
 public class WorldContactListener implements ContactListener {
 
+  /**
+   * Обробка початку зіткнення.
+   *
+   * @param contact Зіткнення
+   */
   @Override
   public void beginContact(Contact contact) {
     Fixture fixA = contact.getFixtureA();
@@ -23,10 +31,9 @@ public class WorldContactListener implements ContactListener {
     switch (cDef) {
       case MarioBros.MARIO_HEAD_BIT | MarioBros.BRICK_BIT:
       case MarioBros.MARIO_HEAD_BIT | MarioBros.COIN_BIT:
-        if(fixA.getFilterData().categoryBits == MarioBros.MARIO_HEAD_BIT){
+        if (fixA.getFilterData().categoryBits == MarioBros.MARIO_HEAD_BIT) {
           ((InteractiveTileObject) fixB.getUserData()).onHeadHit(((Mario) fixA.getUserData()));
-        }
-        else{
+        } else {
           ((InteractiveTileObject) fixA.getUserData()).onHeadHit(((Mario) fixB.getUserData()));
         }
         break;
@@ -38,12 +45,6 @@ public class WorldContactListener implements ContactListener {
         }
         break;
       case MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT:
-        if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_BIT) {
-          ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
-        } else {
-          ((Enemy) fixB.getUserData()).reverseVelocity(true, false);
-        }
-        break;
       case MarioBros.ENEMY_BIT | MarioBros.BRICK_BIT:
         if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_BIT) {
           ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
@@ -52,10 +53,9 @@ public class WorldContactListener implements ContactListener {
         }
         break;
       case MarioBros.MARIO_BIT | MarioBros.ENEMY_BIT:
-        if(fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT){
+        if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT) {
           ((Mario) fixA.getUserData()).hit();
-        }
-        else{
+        } else {
           ((Mario) fixB.getUserData()).hit();
         }
         break;
@@ -81,14 +81,31 @@ public class WorldContactListener implements ContactListener {
     }
   }
 
+  /**
+   * Обробка завершення зіткнення.
+   *
+   * @param contact Зіткнення
+   */
   @Override
   public void endContact(Contact contact) {
   }
 
+  /**
+   * Обробка перед розрахунком зіткнень.
+   *
+   * @param contact  Зіткнення
+   * @param manifold Поверхня зіткнення
+   */
   @Override
   public void preSolve(Contact contact, Manifold manifold) {
   }
 
+  /**
+   * Обробка після розрахунку зіткнень.
+   *
+   * @param contact          Зіткнення
+   * @param contactImpulse   Імпульс зіткнення
+   */
   @Override
   public void postSolve(Contact contact, ContactImpulse contactImpulse) {
   }

@@ -1,7 +1,6 @@
 package main.com.kulikov.exception;
 
 import jakarta.validation.ConstraintViolation;
-import java.io.Serial;
 import java.util.Set;
 
 /**

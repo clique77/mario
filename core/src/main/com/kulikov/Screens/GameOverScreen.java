@@ -18,6 +18,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import main.com.kulikov.MarioBros;
 
+/**
+ * Екран GameOverScreen відображається, коли гравець проходить гру.
+ * Показує повідомлення про кінець гри та можливість грати знову.
+ */
 public class GameOverScreen implements Screen {
   private Viewport viewport;
   private Stage stage;
@@ -28,6 +32,13 @@ public class GameOverScreen implements Screen {
   private Texture backgroundTexture;
   private TextureRegion backgroundRegion;
 
+  /**
+   * Конструктор класу GameOverScreen.
+   *
+   * @param game          Екземпляр гри.
+   * @param batch         Спрайт бетч для відображення графіки.
+   * @param levelFilename Шлях до файлу рівня.
+   */
   public GameOverScreen(Game game, SpriteBatch batch, String levelFilename) {
     this.batch = batch;
     this.game = game;
@@ -95,6 +106,9 @@ public class GameOverScreen implements Screen {
 
   }
 
+  /**
+   * Видаляє всі ресурси, пов'язані з екраном GameOverScreen.
+   */
   @Override
   public void dispose() {
     stage.dispose();

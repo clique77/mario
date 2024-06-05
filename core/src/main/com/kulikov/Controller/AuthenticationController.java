@@ -1,3 +1,6 @@
+/**
+ * Клас контролера автентифікації, який відображає екран входу в систему.
+ */
 package main.com.kulikov.Controller;
 
 import com.badlogic.gdx.ScreenAdapter;
@@ -34,6 +37,13 @@ public class AuthenticationController extends ScreenAdapter {
   private Texture backgroundTexture;
   private Sprite backgroundSprite;
 
+  /**
+   * Конструктор об'єкта AuthenticationController.
+   *
+   * @param game                  Екземпляр гри.
+   * @param authenticationService Служба автентифікації користувача.
+   * @param batch                 Sprite batch для відображення.
+   */
   public AuthenticationController(MarioBros game, AuthenticationService authenticationService, SpriteBatch batch) {
     this.game = game;
     this.authenticationService = authenticationService;
@@ -41,12 +51,14 @@ public class AuthenticationController extends ScreenAdapter {
     this.stage = new Stage();
     this.table = new Table();
 
+    // Load background texture and set sprite size
     backgroundTexture = new Texture("registratio.jpg");
     backgroundSprite = new Sprite(backgroundTexture);
     backgroundSprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
     BitmapFont font = new BitmapFont();
 
+    // Define text field style
     TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
     textFieldStyle.font = font;
     textFieldStyle.fontColor = Color.WHITE;
@@ -74,7 +86,6 @@ public class AuthenticationController extends ScreenAdapter {
     buttonStyle.font = font;
 
     TextButton.TextButtonStyle loginButtonStyle = new TextButton.TextButtonStyle();
-
 
     TextureRegionDrawable loginButtonBackground = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("button.png"))));
     loginButtonStyle.up = loginButtonBackground;
@@ -160,6 +171,11 @@ public class AuthenticationController extends ScreenAdapter {
     backgroundTexture.dispose();
   }
 
+  /**
+   * Authenticates the user using the entered username and password.
+   * If authentication succeeds, navigates to the main menu screen.
+   * If authentication fails, displays an error message.
+   */
   private void authenticate() {
     String username = usernameTextField.getText();
     String password = passwordTextField.getText();

@@ -13,6 +13,9 @@ import main.com.kulikov.Service.AuthenticationService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+/**
+ * Клас гри MarioBros, що розширює фреймворк LibGDX.
+ */
 @Component
 public class MarioBros extends Game {
 	public static final int V_WIDTH = 400;
@@ -40,6 +43,9 @@ public class MarioBros extends Game {
 
 	public static final AnnotationConfigApplicationContext springContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
+	/**
+	 * Метод create, що ініціалізує гру.
+	 */
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
@@ -64,6 +70,9 @@ public class MarioBros extends Game {
 		setScreen(authenticationController);
 	}
 
+	/**
+	 * Метод dispose, що відповідає за звільнення ресурсів після завершення гри.
+	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -72,6 +81,9 @@ public class MarioBros extends Game {
 		springContext.close();
 	}
 
+	/**
+	 * Метод render, що відповідає за відображення гри.
+	 */
 	@Override
 	public void render() {
 		super.render();

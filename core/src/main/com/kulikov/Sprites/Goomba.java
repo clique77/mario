@@ -21,6 +21,13 @@ public class Goomba extends Enemy {
   private boolean setToDestroy;
   private boolean destroyed;
 
+  /**
+   * Конструктор класу Goomba.
+   *
+   * @param screen Екран гри.
+   * @param x      Початкова позиція по осі X.
+   * @param y      Початкова позиція по осі Y.
+   */
   public Goomba(PlayScreen screen, float x, float y) {
     super(screen, x, y);
     frames = new Array<TextureRegion>();
@@ -35,21 +42,28 @@ public class Goomba extends Enemy {
     velocity = new Vector2(0.6f, 0);
   }
 
+  /**
+   * Оновлення стану Goomba.
+   *
+   * @param delta Проміжок часу.
+   */
   public void update(float delta) {
     stateTime += delta;
-    if(setToDestroy && !destroyed) {
+    if (setToDestroy && !destroyed) {
       world.destroyBody(b2body);
       destroyed = true;
       setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
       stateTime = 0;
-    }
-    else if(!destroyed) {
+    } else if (!destroyed) {
       b2body.setLinearVelocity(velocity);
       setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
       setRegion(walkAnimation.getKeyFrame(stateTime, true));
     }
   }
 
+  /**
+   * Визначення Goomba в фізичному світі.
+   */
   @Override
   protected void defineEnemy() {
     BodyDef bdef = new BodyDef();
@@ -82,12 +96,20 @@ public class Goomba extends Enemy {
     b2body.createFixture(fdef).setUserData(this);
   }
 
+  /**
+   * Малює Goomba.
+   *
+   * @param batch Batch для малювання.
+   */
   public void draw(Batch batch) {
-    if(!destroyed || stateTime < 1){
+    if (!destroyed || stateTime < 1) {
       super.draw(batch);
     }
   }
 
+  /**
+   * Обробка удару зверху.
+   */
   @Override
   public void hitOnHead() {
     setToDestroy = true;

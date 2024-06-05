@@ -1,0 +1,16 @@
+com.kirilkulikov.mariobros
+main.com.kulikov
+main.com.kulikov.connection
+main.com.kulikov.Controller
+main.com.kulikov.Dto
+main.com.kulikov.Entity
+main.com.kulikov.exception
+main.com.kulikov.Mapper
+main.com.kulikov.Repository
+main.com.kulikov.Repository.excpetion
+main.com.kulikov.Scenes
+main.com.kulikov.Screens
+main.com.kulikov.Service
+main.com.kulikov.Sprites
+main.com.kulikov.Sprites.Items
+main.com.kulikov.Tools

@@ -79,6 +79,7 @@ public class ConnectionManager {
    * @return A database connection
    */
   private static Connection open() {
+    loadDriver();
     try {
       return DriverManager.getConnection(
           PropertyManager.get(URL_KEY),
@@ -94,6 +95,7 @@ public class ConnectionManager {
    * Initializes the connection pool by creating connections and adding them to the pool.
    */
   private static void initConnectionPool() {
+    loadDriver();
     String poolSize = PropertyManager.get(POOL_SIZE_KEY);
     int size = poolSize == null ? DEFAULT_POOL_SIZE : Integer.parseInt(poolSize);
     pool = new ArrayBlockingQueue<>(size);

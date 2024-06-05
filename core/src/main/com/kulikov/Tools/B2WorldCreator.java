@@ -16,9 +16,17 @@ import main.com.kulikov.MarioBros;
 import main.com.kulikov.Screens.PlayScreen;
 import main.com.kulikov.Sprites.Goomba;
 
+/**
+ * Клас, що створює об'єкти у світі Box2D на основі об'єктів з карти Tiled.
+ */
 public class B2WorldCreator {
   private Array<Goomba> goombas;
 
+  /**
+   * Конструктор класу B2WorldCreator.
+   *
+   * @param screen екран гри, який використовує цей світ
+   */
   public B2WorldCreator(PlayScreen screen) {
     World world = screen.getWorld();
     TiledMap map = screen.getMap();
@@ -28,7 +36,7 @@ public class B2WorldCreator {
     PolygonShape shape = new PolygonShape();
     Body body;
 
-    // Create ground
+    // Створення землі
     for (MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
       Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
 
@@ -43,7 +51,7 @@ public class B2WorldCreator {
       body.createFixture(fixtureDef);
     }
 
-    // Create pipes
+    // Створення труб
     for (MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
       Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
 
@@ -59,17 +67,17 @@ public class B2WorldCreator {
       body.createFixture(fixtureDef);
     }
 
-    // Create coins
+    // Створення монет
     for (MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
       new Coin(screen, object);
     }
 
-    // Create bricks
+    // Створення цеглини
     for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
       new Brick(screen, object);
     }
 
-    // Create goombas
+    // Створення гумбаців
     goombas = new Array<Goomba>();
     for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
       Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
@@ -78,6 +86,11 @@ public class B2WorldCreator {
     }
   }
 
+  /**
+   * Отримує масив гумбаців у світі.
+   *
+   * @return масив гумбаців
+   */
   public Array<Goomba> getGoombas() {
     return goombas;
   }

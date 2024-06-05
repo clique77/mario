@@ -1,3 +1,9 @@
+/**
+ * Клас SignUpController керує процесом реєстрації в грі.
+ * Він надає інтерфейс користувачам для реєстрації, надаючи ім'я користувача, електронну пошту та пароль.
+ * Після успішної реєстрації перенаправляє користувача на екран аутентифікації.
+ * Якщо реєстрація не вдається через помилки валідації або наявність даних користувача, відображаються відповідні повідомлення про помилки.
+ */
 package main.com.kulikov.Controller;
 
 import com.badlogic.gdx.Gdx;
@@ -38,6 +44,13 @@ public class SignUpController extends ScreenAdapter {
   private boolean showError;
   private AuthenticationService authenticationService;
 
+  /**
+   * Конструктор об'єкта SignUpController.
+   *
+   * @param game                  Екземпляр гри.
+   * @param authenticationService Служба автентифікації користувача.
+   * @param batch                 Sprite batch для відображення.
+   */
   public SignUpController(MarioBros game, AuthenticationService authenticationService, SpriteBatch batch) {
     this.game = game;
     this.authenticationService = authenticationService;
@@ -56,7 +69,7 @@ public class SignUpController extends ScreenAdapter {
     table.setFillParent(true);
     stage.addActor(table);
 
-    Label titleLabel = new Label("Sign Up", new Label.LabelStyle(font, Color.WHITE));
+    Label titleLabel = new Label("Register", new Label.LabelStyle(font, Color.WHITE));
     titleLabel.setFontScale(1f);
     table.add(titleLabel).colspan(2).padBottom(10).center();
     table.row();
@@ -135,9 +148,19 @@ public class SignUpController extends ScreenAdapter {
       }
     });
 
-    table.add(backButton).colspan(2).width(200).height(30).padTop(padding).center();
+    table.add(backButton).colspan(2).width(200).height(30).
+        padTop(padding).center();
   }
 
+  /**
+   * Спроба зареєструвати нового користувача з наданими обліковими даними.
+   * Перевіряє валідність даних користувача та перевіряє наявність існуючих користувачів.
+   * Відображає відповідні повідомлення про помилки, якщо виникають проблеми з валідацією або дублюванням користувачів.
+   *
+   * @param username Ім'я користувача нового користувача.
+   * @param email    Електронна пошта нового користувача.
+   * @param password Пароль нового користувача.
+   */
   private void signUp(String username, String email, String password) {
     UserDto userDto = new UserDto(username, password, email);
 
@@ -155,12 +178,12 @@ public class SignUpController extends ScreenAdapter {
     }
 
     if (signUpService.existsByUsername(username)) {
-      showErrorAlert("User with this username already exists.");
+      showErrorAlert("Користувач з таким ім'ям вже існує.");
       return;
     }
 
     if (signUpService.existsByEmail(email)) {
-      showErrorAlert("User with this email already exists.");
+      showErrorAlert("Користувач з такою електронною адресою вже існує.");
       return;
     }
 
@@ -168,6 +191,11 @@ public class SignUpController extends ScreenAdapter {
     game.setScreen(new AuthenticationController(game, authenticationService, batch));
   }
 
+  /**
+   * Відображення повідомлення про помилку.
+   *
+   * @param message Повідомлення про помилку, що відображається.
+   */
   private void showErrorAlert(String message) {
     this.errorMessage = message;
     this.showError = true;
